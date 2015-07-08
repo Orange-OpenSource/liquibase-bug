@@ -1,0 +1,60 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.3.xsd"
+                   logicalFilePath="db-changelog">
+
+    <property name="clob.type" value="clob" dbms="oracle"/>
+    <property name="clob.type" value="longtext" dbms="mysql"/>
+    <property name="clob.type" value="text" dbms="postgresql"/>
+    <property name="clob.type" value="clob" dbms="h2"/>
+
+    <changeSet id="1" author="joe@test">
+        <createTable tableName="test">
+            <column name="id" type="int"/>
+            <column name="column1_name" type="${clob.type}"/>
+        </createTable>
+    </changeSet>
+
+
+
+    <!-- Cleanup market table  -->
+    <!--<changeSet id="1354032499736-01" author="cl@ra" failOnError="false">-->
+        <!--<delete tableName="databasechangelog"/>-->
+    <!--</changeSet>-->
+
+    <!--<changeSet id="1354032499736-02" author="cl@ra" failOnError="false">-->
+        <!--<delete tableName="databasechangeloglock"/>-->
+    <!--</changeSet>-->
+
+    <changeSet id="1354032499736-1" author="cl@ra" failOnError="false">
+        <dropTable tableName="market"/>
+    </changeSet>
+
+    <!-- Cleanup oracle sequence -->
+    <changeSet id="1354032499736-2" author="cl@ra" failOnError="false" dbms="oracle">
+        <dropSequence sequenceName="SEQ_MARKET"/>
+    </changeSet>
+
+
+    <changeSet author="cl@ara" id="1354032499736-3" dbms="oracle">
+        <createSequence sequenceName="SEQ_MARKET"  minValue="1" incrementBy="1"/>
+    </changeSet>
+
+    <changeSet author="cl@ra" id="1354032499736-4">
+         <createTable tableName="market">
+            <column name="idmar" type="integer" autoIncrement="true">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="idmar_pkey"/>
+            </column>
+            <column name="name" type="VARCHAR(250)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="version" type="integer">
+                <constraints nullable="false"/>
+            </column>
+             <column name="lastModified" type="timestamp"/>
+        </createTable>
+
+        <modifySql dbms="mysql">
+            <append value=" engine innodb DEFAULT CHARSET=utf8"/>
+        </modifySql>
+    </changeSet>
+</databaseChangeLog>
